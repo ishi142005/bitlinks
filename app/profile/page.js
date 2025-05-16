@@ -27,8 +27,8 @@ export default function ProfilePage() {
     } else if (status === 'authenticated') {
       fetchUserLinks();
     }
-  }, [status]);
-
+  }, [status, router]);
+  
   const fetchUserLinks = async () => {
     try {
       const res = await fetch('/api/user-urls');
