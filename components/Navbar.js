@@ -31,7 +31,6 @@ export default function Navbar() {
       className="bg-indigo-500 text-white px-6 py-4 shadow-md sticky top-0 z-50 font-semibold"
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo */}
         <Link
           href="/"
           className="text-3xl font-extrabold tracking-tight hover:text-indigo-300 transition-colors duration-300"
@@ -39,7 +38,6 @@ export default function Navbar() {
           Bitlinks
         </Link>
 
-        {/* Navigation Links */}
         <div className="flex items-center gap-6 md:gap-8">
           {navItems.map((item) => (
             <motion.div
@@ -60,7 +58,6 @@ export default function Navbar() {
             </motion.div>
           ))}
 
-          {/* Login/Logout Button */}
           {!session ? (
             <motion.div
               whileTap={{ scale: 0.95 }}

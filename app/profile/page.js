@@ -23,7 +23,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (status === 'loading') return;
-
     if (status === 'unauthenticated') {
       router.push('/signin');
     } else if (status === 'authenticated') {
@@ -35,7 +34,6 @@ export default function ProfilePage() {
     try {
       const res = await fetch('/api/user-urls');
       const data = await res.json();
-
       if (res.ok && data.success) {
         setUserLinks(data.urls);
         setError(null);
@@ -59,14 +57,11 @@ export default function ProfilePage() {
 
   const handleDelete = async (id) => {
     if (!window.confirm?.('Are you sure you want to delete this link?')) return;
-
     try {
       const res = await fetch(`/api/user-urls/${id}`, {
         method: 'DELETE',
       });
-
       const data = await res.json();
-
       if (res.ok && data.success) {
         setUserLinks((prev) => prev.filter((link) => link._id !== id));
       } else {
