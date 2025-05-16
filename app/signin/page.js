@@ -30,7 +30,8 @@ export default function SignInPage() {
     if (res?.ok) {
       router.replace('/profile');
     } else {
-      alert('Invalid email or password');
+      console.error('Login error:', res);
+      alert(res?.error || 'Login failed');
     }
   };
 
