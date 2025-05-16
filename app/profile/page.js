@@ -22,26 +22,28 @@ export default function ProfilePage() {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   useEffect(() => {
-    if (status === 'loading') return; // Don't fetch while loading
+    if (status === 'loading') return;
 
     if (status === 'unauthenticated') {
       router.push('/signin');
     } else if (status === 'authenticated') {
       fetchUserLinks();
     }
-  }, [status, router]);
+  }, [status]);
 
   const fetchUserLinks = async () => {
     try {
       const res = await fetch('/api/user-urls');
       const data = await res.json();
-      if (data.success) {
+
+      if (res.ok && data.success) {
         setUserLinks(data.urls);
         setError(null);
       } else {
-        setError('Failed to load URLs.');
+        setError(data.message || 'Failed to load URLs.');
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError('Something went wrong while fetching your URLs.');
     } finally {
       setLoading(false);
@@ -49,13 +51,10 @@ export default function ProfilePage() {
   };
 
   const handleCopy = (text, id) => {
-    if (navigator?.clipboard) {
-      navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text).then(() => {
       setCopiedLinkId(id);
       setTimeout(() => setCopiedLinkId(null), 1500);
-    } else {
-      alert('Clipboard not supported');
-    }
+    });
   };
 
   const handleDelete = async (id) => {
@@ -65,12 +64,13 @@ export default function ProfilePage() {
       const res = await fetch(`/api/user-urls/${id}`, {
         method: 'DELETE',
       });
+
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok && data.success) {
         setUserLinks((prev) => prev.filter((link) => link._id !== id));
       } else {
-        alert('Failed to delete the link.');
+        alert(data.message || 'Failed to delete the link.');
       }
     } catch (err) {
       console.error('Delete error:', err);
