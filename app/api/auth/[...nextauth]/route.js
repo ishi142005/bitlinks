@@ -5,12 +5,22 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
 import { compare } from "bcryptjs";
 
+// Custom adapter to override createUser to prevent auto-creation
+const CustomMongoDBAdapter = MongoDBAdapter(clientPromise);
+
+const adapterWithNoAutoCreateUser = {
+  ...CustomMongoDBAdapter,
+  createUser: async () => {
+    // Disable auto user creation for OAuth providers
+    return null;
+  },
+};
+
 export const authOptions = {
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: adapterWithNoAutoCreateUser,
   secret: process.env.NEXTAUTH_SECRET,
 
   providers: [
-    // ✅ Google Provider with prompt to force account selection
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -31,7 +41,6 @@ export const authOptions = {
       },
     }),
 
-    //Email/Password Credentials Provider
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -67,7 +76,6 @@ export const authOptions = {
   },
 
   callbacks: {
-    // Block Google sign-ins if email not found in DB
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         const client = await clientPromise;
@@ -82,7 +90,6 @@ export const authOptions = {
       return true;
     },
 
-    // ✅ Attach user ID to JWT
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -92,7 +99,6 @@ export const authOptions = {
       return token;
     },
 
-    // ✅ Attach ID to session
     async session({ session, token }) {
       if (token && session?.user) {
         session.user.id = token.id || token.sub;
@@ -103,6 +109,5 @@ export const authOptions = {
   },
 };
 
-// ✅ Fixed variable name
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
