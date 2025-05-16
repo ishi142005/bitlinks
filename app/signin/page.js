@@ -1,15 +1,22 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; 
-import { FaGoogle } from 'react-icons/fa'; // Import the Google icon
+import Link from 'next/link';
+import { FaGoogle } from 'react-icons/fa';
 
 export default function SignInPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/profile');
+    }
+  }, [status, router]);
 
   const handleCredentialsLogin = async (e) => {
     e.preventDefault();
@@ -21,27 +28,15 @@ export default function SignInPage() {
     });
 
     if (res?.ok) {
-      router.push('/profile');
+      router.replace('/profile');
     } else {
       alert('Invalid email or password');
     }
   };
 
-  const handleGoogleLogin = async () => {
-    const res = await signIn('google', { redirect: false, callbackUrl: '/profile' });
-    
-    // If Google sign-in is successful, proceed to profile
-    if (res?.ok) {
-      router.push('/profile');
-    } 
-    // If OAuthAccountNotLinked error occurs, prompt the user to link their Google account or sign up
-    else if (res?.error === 'OAuthAccountNotLinked') {
-      alert('This Google account is not linked to an existing account. Please sign up or link your account.');
-    } 
-    // Other errors
-    else {
-      alert('An error occurred during Google sign-in. Please try again.');
-    }
+  const handleGoogleLogin = () => {
+    // Let next-auth handle the redirect properly
+    signIn('google', { callbackUrl: '/profile' });
   };
 
   return (
@@ -87,7 +82,12 @@ export default function SignInPage() {
         </button>
 
         <div className="mt-6 text-center text-gray-600">
-          <p>Don&#39;t forget to sign in! <Link href="/signup" className="text-indigo-600 hover:underline">Create an account</Link></p>
+          <p>
+            Don&#39;t have an account?{' '}
+            <Link href="/signup" className="text-indigo-600 hover:underline">
+              Create one
+            </Link>
+          </p>
         </div>
       </div>
     </div>
