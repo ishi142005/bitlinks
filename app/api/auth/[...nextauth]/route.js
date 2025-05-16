@@ -5,25 +5,16 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
 import { compare } from "bcryptjs";
 
-// Custom adapter to override createUser to prevent auto-creation
-const CustomMongoDBAdapter = MongoDBAdapter(clientPromise);
-
-const adapterWithNoAutoCreateUser = {
-  ...CustomMongoDBAdapter,
-  createUser: async () => {
-    // Disable auto user creation for OAuth providers
-    return null;
-  },
-};
+const adapter = MongoDBAdapter(clientPromise);
 
 export const authOptions = {
-  adapter: adapterWithNoAutoCreateUser,
+  adapter,
   secret: process.env.NEXTAUTH_SECRET,
 
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       authorization: {
         params: {
           prompt: "select_account consent",
@@ -48,27 +39,37 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const client = await clientPromise;
-        const users = client.db("bitlinks").collection("users");
+        try {
+          const client = await clientPromise;
+          const users = client.db("bitlinks").collection("users");
 
-        const user = await users.findOne({ email: credentials.email });
+          const user = await users.findOne({ email: credentials.email });
 
-        if (!user || !(await compare(credentials.password, user.password))) {
-          throw new Error("Invalid email or password");
+          if (!user) {
+            throw new Error("No user found with this email");
+          }
+
+          const isValid = await compare(credentials.password, user.password);
+          if (!isValid) {
+            throw new Error("Invalid password");
+          }
+
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name || user.email.split("@")[0],
+          };
+        } catch (error) {
+          console.error("Authorize error:", error);
+          return null;
         }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name || user.email.split("@")[0],
-        };
       },
     }),
   ],
 
   pages: {
-    signIn: "/signin",
-    error: "/auth/error",
+    signIn: "/signin",  // Make sure you have this page implemented
+    error: "/auth/error", // Optional error page
   },
 
   session: {
@@ -84,7 +85,7 @@ export const authOptions = {
         const existingUser = await users.findOne({ email: user.email });
         if (!existingUser) {
           console.log("Blocked Google login attempt for:", user.email);
-          return false;
+          return false; // Block sign-in if user doesn't exist in DB
         }
       }
       return true;
@@ -93,16 +94,13 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        console.log("User data in JWT callback:", user);
       }
-      console.log("Final JWT token:", token);
       return token;
     },
 
     async session({ session, token }) {
-      if (token && session?.user) {
+      if (session?.user) {
         session.user.id = token.id || token.sub;
-        console.log("Session user data:", session.user);
       }
       return session;
     },
