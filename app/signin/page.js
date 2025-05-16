@@ -36,7 +36,6 @@ export default function SignInPage() {
   };
 
   const handleGoogleLogin = () => {
-    // Let next-auth handle the redirect properly
     signIn('google', { callbackUrl: '/profile' });
   };
 

@@ -68,8 +68,8 @@ export const authOptions = {
   ],
 
   pages: {
-    signIn: "/signin",  // Make sure you have this page implemented
-    error: "/auth/error", // Optional error page
+    signIn: "/signin",     // Your custom sign-in page
+    error: "/auth/error",  // Optional error page
   },
 
   session: {
@@ -84,8 +84,13 @@ export const authOptions = {
 
         const existingUser = await users.findOne({ email: user.email });
         if (!existingUser) {
-          console.log("Blocked Google login attempt for:", user.email);
-          return false; // Block sign-in if user doesn't exist in DB
+          // Automatically register new Google user
+          await users.insertOne({
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            provider: "google",
+          });
         }
       }
       return true;
@@ -103,6 +108,10 @@ export const authOptions = {
         session.user.id = token.id || token.sub;
       }
       return session;
+    },
+
+    redirect({ url, baseUrl }) {
+      return "/profile"; // Always redirect to profile after login
     },
   },
 };
