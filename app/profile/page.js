@@ -22,23 +22,26 @@ export default function ProfilePage() {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   useEffect(() => {
+    if (status === 'loading') return; // Don't fetch while loading
+
     if (status === 'unauthenticated') {
       router.push('/signin');
     } else if (status === 'authenticated') {
       fetchUserLinks();
     }
   }, [status, router]);
-  
+
   const fetchUserLinks = async () => {
     try {
       const res = await fetch('/api/user-urls');
       const data = await res.json();
       if (data.success) {
         setUserLinks(data.urls);
+        setError(null);
       } else {
         setError('Failed to load URLs.');
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong while fetching your URLs.');
     } finally {
       setLoading(false);
@@ -46,13 +49,17 @@ export default function ProfilePage() {
   };
 
   const handleCopy = (text, id) => {
-    navigator.clipboard.writeText(text);
-    setCopiedLinkId(id);
-    setTimeout(() => setCopiedLinkId(null), 1500);
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedLinkId(id);
+      setTimeout(() => setCopiedLinkId(null), 1500);
+    } else {
+      alert('Clipboard not supported');
+    }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this link?')) return;
+    if (!window.confirm?.('Are you sure you want to delete this link?')) return;
 
     try {
       const res = await fetch(`/api/user-urls/${id}`, {
@@ -61,7 +68,7 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (data.success) {
-        setUserLinks(prev => prev.filter(link => link._id !== id));
+        setUserLinks((prev) => prev.filter((link) => link._id !== id));
       } else {
         alert('Failed to delete the link.');
       }
@@ -71,7 +78,6 @@ export default function ProfilePage() {
     }
   };
 
-  // ✅ FIX: prevent UI from rendering before session status is confirmed
   if (status === 'loading' || loading) {
     return (
       <div className="flex justify-center items-center h-screen text-lg text-gray-700">
@@ -111,7 +117,10 @@ export default function ProfilePage() {
             userLinks.map((link) => {
               const shortFullUrl = `${baseUrl}/${link.shortUrl}`;
               return (
-                <div key={link._id} className="bg-white rounded-lg shadow-md p-6 flex flex-col space-y-4 transform hover:scale-105 transition-all duration-300 w-full">
+                <div
+                  key={link._id}
+                  className="bg-white rounded-lg shadow-md p-6 flex flex-col space-y-4 transform hover:scale-105 transition-all duration-300 w-full"
+                >
                   <h3 className="text-xl font-semibold text-black">Original URL:</h3>
                   <p className="text-indigo-900 text-sm break-words">{link.original}</p>
 
