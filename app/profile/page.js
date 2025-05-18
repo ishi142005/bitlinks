@@ -84,22 +84,24 @@ export default function ProfilePage() {
   return (
     <main className="bg-gradient-to-br from-[#eef2f7] via-[#e3e8f0] to-[#f0f4fc] min-h-screen text-gray-800">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <h1 className={`text-5xl font-extrabold text-slate-800 ${poppins.className}`}>
-              Welcome, {session?.user?.name?.split(' ')[0] || 'User'}!
-            </h1>
-            <p className="text-lg text-gray-600 mt-2">
-              Here are your personal short URLs and their details.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 break-all">
+        <div className="flex flex-col-reverse md:flex-row items-start md:items-center justify-between mb-10 space-y-4 md:space-y-0">
+          {/* Right side - Avatar + Email */}
+          <div className="flex items-center space-x-4 md:order-2">
             <div className="w-14 h-14 flex items-center justify-center bg-indigo-500 text-white rounded-full text-xl font-bold">
               {session?.user?.name?.charAt(0)}
             </div>
             <span className="text-base text-gray-700">{session?.user?.email}</span>
           </div>
 
+          {/* Left side - Welcome message */}
+          <div className="md:order-1">
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800 ${poppins.className}`}>
+              Welcome, {session?.user?.name?.split(' ')[0] || 'User'}!
+            </h1>
+            <p className="text-lg text-gray-600 mt-2">
+              Here are your personal short URLs and their details.
+            </p>
+          </div>
         </div>
 
         {error && <div className="text-red-600 text-center mb-4">{error}</div>}
