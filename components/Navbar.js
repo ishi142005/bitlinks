@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Make sure lucide-react is installed
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -33,14 +33,14 @@ export default function Navbar() {
       transition={{ duration: 0.5 }}
       className="bg-indigo-500 text-white px-6 py-4 shadow-md sticky top-0 z-50 font-semibold"
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-7xl mx-auto flex justify-between items-center relative">
         <Link href="/" className="text-3xl font-extrabold tracking-tight hover:text-indigo-300">
           Bitlinks
         </Link>
 
         {/* Hamburger icon */}
         <div className="md:hidden">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
@@ -52,9 +52,7 @@ export default function Navbar() {
               key={item.href}
               href={item.href}
               className={`transition-all duration-300 ${
-                pathname === item.href
-                  ? "underline underline-offset-4"
-                  : "hover:text-indigo-200"
+                pathname === item.href ? "underline underline-offset-4" : "hover:text-indigo-200"
               }`}
             >
               {item.label}
@@ -77,47 +75,41 @@ export default function Navbar() {
             </button>
           )}
         </div>
+
+        {/* Mobile menu dropdown (corner small menu) */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute right-4 top-16 w-40 bg-white text-indigo-700 rounded-lg shadow-lg p-2 z-50">
+            {session ? (
+              <>
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 rounded hover:bg-indigo-100 transition"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 rounded hover:bg-indigo-100 transition"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/signin"
+                className="block text-center px-4 py-2 rounded hover:bg-indigo-100 transition font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        )}
       </div>
-
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-4 flex flex-col gap-4 px-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block py-2 ${
-                pathname === item.href
-                  ? "underline underline-offset-4"
-                  : "hover:text-indigo-200"
-              }`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          {!session ? (
-            <Link
-              href="/signin"
-              className="bg-white text-indigo-700 text-center py-2 rounded-full hover:bg-indigo-100 transition font-medium shadow-lg"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Login
-            </Link>
-          ) : (
-            <button
-              onClick={() => {
-                handleLogout();
-                setMobileMenuOpen(false);
-              }}
-              className="bg-white text-indigo-700 py-2 rounded-full hover:bg-indigo-100 transition font-medium shadow-lg"
-            >
-              Logout
-            </button>
-          )}
-        </div>
-      )}
     </motion.nav>
   );
 }
