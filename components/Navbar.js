@@ -4,10 +4,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu, X } from "lucide-react"; // Make sure lucide-react is installed
 
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
@@ -31,62 +34,90 @@ export default function Navbar() {
       className="bg-indigo-500 text-white px-6 py-4 shadow-md sticky top-0 z-50 font-semibold"
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link
-          href="/"
-          className="text-3xl font-extrabold tracking-tight hover:text-indigo-300 transition-colors duration-300"
-        >
+        <Link href="/" className="text-3xl font-extrabold tracking-tight hover:text-indigo-300">
           Bitlinks
         </Link>
 
-        <div className="flex items-center gap-6 md:gap-8">
+        {/* Hamburger icon */}
+        <div className="md:hidden">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center gap-6">
           {navItems.map((item) => (
-            <motion.div
+            <Link
               key={item.href}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              href={item.href}
+              className={`transition-all duration-300 ${
+                pathname === item.href
+                  ? "underline underline-offset-4"
+                  : "hover:text-indigo-200"
+              }`}
             >
-              <Link
-                href={item.href}
-                className={`transition-all duration-300 ${
-                  pathname === item.href
-                    ? "underline underline-offset-4 text-white"
-                    : "text-white hover:text-white"
-                }`}
-              >
-                {item.label}
-              </Link>
-            </motion.div>
+              {item.label}
+            </Link>
           ))}
 
           {!session ? (
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
+            <Link
+              href="/signin"
+              className="bg-white text-indigo-700 px-6 py-2 rounded-full hover:bg-indigo-100 transition-all font-medium shadow-lg"
             >
-              <Link
-                href="/signin"
-                className="bg-white text-indigo-700 px-6 py-3 rounded-full hover:bg-indigo-100 transition-all font-medium shadow-lg"
-              >
-                Login
-              </Link>
-            </motion.div>
+              Login
+            </Link>
           ) : (
-            <motion.div
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 300 }}
+            <button
+              onClick={handleLogout}
+              className="bg-white text-indigo-700 px-6 py-2 rounded-full hover:bg-indigo-100 transition-all font-medium shadow-lg"
             >
-              <button
-                onClick={handleLogout}
-                className="bg-white text-indigo-700 px-6 py-3 rounded-full hover:bg-indigo-100 transition-all font-medium shadow-lg"
-              >
-                Logout
-              </button>
-            </motion.div>
+              Logout
+            </button>
           )}
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-4 flex flex-col gap-4 px-4">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`block py-2 ${
+                pathname === item.href
+                  ? "underline underline-offset-4"
+                  : "hover:text-indigo-200"
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          {!session ? (
+            <Link
+              href="/signin"
+              className="bg-white text-indigo-700 text-center py-2 rounded-full hover:bg-indigo-100 transition font-medium shadow-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Login
+            </Link>
+          ) : (
+            <button
+              onClick={() => {
+                handleLogout();
+                setMobileMenuOpen(false);
+              }}
+              className="bg-white text-indigo-700 py-2 rounded-full hover:bg-indigo-100 transition font-medium shadow-lg"
+            >
+              Logout
+            </button>
+          )}
+        </div>
+      )}
     </motion.nav>
   );
 }
