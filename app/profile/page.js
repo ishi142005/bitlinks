@@ -93,12 +93,13 @@ export default function ProfilePage() {
               Here are your personal short URLs and their details.
             </p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 break-all">
             <div className="w-14 h-14 flex items-center justify-center bg-indigo-500 text-white rounded-full text-xl font-bold">
               {session?.user?.name?.charAt(0)}
             </div>
             <span className="text-base text-gray-700">{session?.user?.email}</span>
           </div>
+
         </div>
 
         {error && <div className="text-red-600 text-center mb-4">{error}</div>}
