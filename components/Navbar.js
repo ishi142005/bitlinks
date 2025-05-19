@@ -79,7 +79,25 @@ export default function Navbar() {
         {/* Mobile menu dropdown (corner small menu) */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute right-4 top-16 w-40 bg-white text-indigo-700 rounded-lg shadow-lg p-2 z-50">
-            {session ? (
+            {navItems.map((item) => (  // Add this
+              <Link                               // Add this
+                key={item.href}                     // Add this
+                href={item.href}                    // Add this
+                className="block px-4 py-2 rounded hover:bg-indigo-100 transition"  // Add this
+                onClick={() => setMobileMenuOpen(false)}   // Add this
+              >                                  // Add this
+                {item.label}                        // Add this
+              </Link>                                 // Add this
+            ))}                                   // Add this
+            {!session ? (
+              <Link
+                href="/signin"
+                className="block text-center px-4 py-2 rounded hover:bg-indigo-100 transition font-medium"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+            ) : (
               <>
                 <Link
                   href="/profile"
@@ -98,14 +116,6 @@ export default function Navbar() {
                   Logout
                 </button>
               </>
-            ) : (
-              <Link
-                href="/signin"
-                className="block text-center px-4 py-2 rounded hover:bg-indigo-100 transition font-medium"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
             )}
           </div>
         )}
