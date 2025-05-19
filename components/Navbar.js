@@ -13,7 +13,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
+    signOut({ callbackUrl: "/" });
   };
 
   const navItems = [
@@ -34,13 +34,19 @@ export default function Navbar() {
       className="bg-indigo-500 text-white px-6 py-4 shadow-md sticky top-0 z-50 font-semibold"
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center relative">
-        <Link href="/" className="text-3xl font-extrabold tracking-tight hover:text-indigo-300">
+        <Link
+          href="/"
+          className="text-3xl font-extrabold tracking-tight hover:text-indigo-300"
+        >
           Bitlinks
         </Link>
 
-        {/* Hamburger icon */}
+        {/* Hamburger icon for mobile */}
         <div className="md:hidden">
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
             {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
@@ -52,7 +58,9 @@ export default function Navbar() {
               key={item.href}
               href={item.href}
               className={`transition-all duration-300 ${
-                pathname === item.href ? "underline underline-offset-4" : "hover:text-indigo-200"
+                pathname === item.href
+                  ? "underline underline-offset-4"
+                  : "hover:text-indigo-200"
               }`}
             >
               {item.label}
@@ -76,19 +84,20 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile menu dropdown (corner small menu) */}
+        {/* Mobile menu dropdown */}
         {mobileMenuOpen && (
           <div className="md:hidden absolute right-4 top-16 w-40 bg-white text-indigo-700 rounded-lg shadow-lg p-2 z-50">
-            {navItems.map((item) => (  // Add this
-              <Link                               // Add this
-                key={item.href}                     // Add this
-                href={item.href}                    // Add this
-                className="block px-4 py-2 rounded hover:bg-indigo-100 transition"  // Add this
-                onClick={() => setMobileMenuOpen(false)}   // Add this
-              >                                  // Add this
-                {item.label}                        // Add this
-              </Link>                                 // Add this
-            ))}                                   // Add this
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block px-4 py-2 rounded hover:bg-indigo-100 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+
             {!session ? (
               <Link
                 href="/signin"
@@ -98,24 +107,15 @@ export default function Navbar() {
                 Login
               </Link>
             ) : (
-              <>
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 rounded hover:bg-indigo-100 transition"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 rounded hover:bg-indigo-100 transition"
-                >
-                  Logout
-                </button>
-              </>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 rounded hover:bg-indigo-100 transition"
+              >
+                Logout
+              </button>
             )}
           </div>
         )}
