@@ -42,18 +42,20 @@ export const authOptions = {
         try {
           const client = await clientPromise;
           const users = client.db("bitlinks").collection("users");
-
+      
           const user = await users.findOne({ email: credentials.email });
-
+      
           if (!user) {
-            throw new Error("No user found with this email");
+            console.log("No user found");
+            return null; 
           }
-
+      
           const isValid = await compare(credentials.password, user.password);
           if (!isValid) {
-            throw new Error("Invalid password");
+            console.log("Invalid password");
+            return null; 
           }
-
+      
           return {
             id: user._id.toString(),
             email: user.email,
@@ -63,13 +65,13 @@ export const authOptions = {
           console.error("Authorize error:", error);
           return null;
         }
-      },
+      },      
     }),
   ],
 
   pages: {
-    signIn: "/signin",     // Your custom sign-in page
-    error: "/auth/error",  // Optional error page
+    signIn: "/signin",     
+    error: "/auth/error",  
   },
 
   session: {
