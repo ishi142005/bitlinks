@@ -14,7 +14,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      router.replace('/profile');
+      window.location.href = '/profile'; 
     }
   }, [status, router]);
 
@@ -28,7 +28,7 @@ export default function SignInPage() {
     });
 
     if (res?.ok) {
-      router.replace('/profile');
+      window.location.href = '/profile'; 
     } else {
       console.error('Login error:', res);
       alert(res?.error || 'Login failed');
