@@ -24,7 +24,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (status === 'loading') return;
     if (status === 'unauthenticated') {
-      router.push('/signin');
+      router.replace('/signin');
     } else if (status === 'authenticated') {
       fetchUserLinks();
     }
