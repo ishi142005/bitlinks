@@ -21,13 +21,13 @@ export async function POST(req) {
     const db = client.db();
     const urls = db.collection('urls');
 
-    // Ensure compound unique index exists (shortUrl + email)
-    await urls.createIndex({ shortUrl: 1, email: 1 }, { unique: true });
+    // Ensure shortUrl is globally unique (remove email from index!)
+    await urls.createIndex({ shortUrl: 1 }, { unique: true });
 
     let finalShortUrl = shortUrl && shortUrl.trim() !== '' ? shortUrl.trim() : null;
 
     if (finalShortUrl) {
-      // Disallow purely numeric custom short URLs
+      // Prevent numeric-only short URLs
       if (/^\d+$/.test(finalShortUrl)) {
         return Response.json(
           { success: false, error: 'Custom short URL cannot be purely numeric. Please include letters.' },
@@ -35,30 +35,27 @@ export async function POST(req) {
         );
       }
 
-      // Check if the custom short URL already exists for this user
-      const existingCustomShortUrl = await urls.findOne({
-        shortUrl: finalShortUrl,
-        email: session.user.email,
-      });
+      // ❗ Check if this short URL is already taken globally
+      const existingCustomShortUrl = await urls.findOne({ shortUrl: finalShortUrl });
       if (existingCustomShortUrl) {
         return Response.json(
-          { success: false, error: 'Custom short URL already exists. Please try a different one.' },
+          { success: false, error: 'Custom short URL is already taken. Please choose a different one.' },
           { status: 400 }
         );
       }
     } else {
-      // Generate a unique short URL not used by the current user
+      // Generate a unique short URL globally
       let isUnique = false;
       while (!isUnique) {
         finalShortUrl = nanoid(7);
-        const existing = await urls.findOne({ shortUrl: finalShortUrl, email: session.user.email });
+        const existing = await urls.findOne({ shortUrl: finalShortUrl });
         if (!existing) {
           isUnique = true;
         }
       }
     }
 
-    // Check if user already created a short URL for the same original URL
+    // Optional: Prevent duplicate original URLs per user (not mandatory)
     const existing = await urls.findOne({ original: originalUrl, email: session.user.email });
     if (existing) {
       return Response.json({ success: true, shortUrl: existing.shortUrl });

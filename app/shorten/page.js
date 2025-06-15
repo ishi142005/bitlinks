@@ -18,17 +18,21 @@ export default function ShortenPage() {
       requestBody.shortUrl = trimmedAlias;
     }
 
-    const response = await fetch('/api/shorten', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBody),
-    });
+    try {
+      const response = await fetch('/api/shorten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
+      });
 
-    const data = await response.json();
-    if (data.success) {
-      setShortUrl(`${window.location.origin}/${data.shortUrl}`);
-    } else {
-      setError(data.error || 'Unknown error');
+      const data = await response.json();
+      if (data.success) {
+        setShortUrl(`${window.location.origin}/${data.shortUrl}`);
+      } else {
+        setError(data.error || 'Unknown error');
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
     }
   };
 

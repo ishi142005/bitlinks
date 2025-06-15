@@ -113,7 +113,7 @@ export const authOptions = {
     },
 
     redirect({ url, baseUrl }) {
-      return "/profile"; // Always redirect to profile after login
+      return `${baseUrl}/profile`; // Always redirect to profile after login
     },
   },
 };
