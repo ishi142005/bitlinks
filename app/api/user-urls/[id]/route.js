@@ -17,7 +17,7 @@ export async function DELETE(request) {
     const id = url.pathname.split("/").pop(); // get the last segment of the URL path
 
     const client = await clientPromise;
-    const db = client.db();
+    const db = client.db("bitlinks");
 
     // Fetch the URL to be deleted (in case you want to return it)
     const urlToDelete = await db.collection("urls").findOne({ _id: new ObjectId(id), email: session.user.email });
@@ -49,7 +49,7 @@ export async function GET(request, { params }) {
 
   try {
     const client = await clientPromise;
-    const db = client.db();
+    const db = client.db("bitlinks");
 
     const url = await db.collection("urls").findOne({
       _id: new ObjectId(params.id),

@@ -24,9 +24,16 @@ export async function POST(req) {
     }
 
     const client = await clientPromise;
-    const urls = client.db().collection('urls');
+    const urls = client.db("bitlinks").collection('urls');
 
     let finalShortUrl = shortUrl?.trim() || null;
+
+    if (!finalShortUrl) {
+      return Response.json(
+        { success: false, error: 'Custom short URL is required.' },
+        { status: 400 }
+      );
+    }
 
     if (finalShortUrl) {
       if (/^\d+$/.test(finalShortUrl)) {
@@ -43,10 +50,6 @@ export async function POST(req) {
           { status: 400 }
         );
       }
-    } else {
-      do {
-        finalShortUrl = nanoid(7);
-      } while (await urls.findOne({ shortUrl: finalShortUrl }));
     }
 
     const existingForUser = await urls.findOne({

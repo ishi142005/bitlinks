@@ -12,7 +12,7 @@ export async function GET(req) {
 
   try {
     const client = await clientPromise;
-    const db = client.db();
+    const db = client.db("bitlinks");
     const urls = db.collection('urls');
  
     const userUrls = await urls.find({ email: session.user.email }).toArray();

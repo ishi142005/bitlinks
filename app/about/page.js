@@ -82,7 +82,7 @@ const About = () => {
           How It Works
         </h2>
         <p className="text-base text-gray-700">
-          Sign in, paste your long URL, optionally give it a name, and click “Shorten.” Your personalized BitLink is ready — and stored in your dashboard for access and sharing.
+          Sign in, paste your long URL, As your choice give it a name, and click “Shorten.” Your personalized BitLink is ready — and stored in your dashboard for access and sharing.
         </p>
       </motion.section>
 
