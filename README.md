@@ -64,9 +64,6 @@ Sign up on MongoDB Atlas, create a cluster, whitelist your IP address, and get y
 #### JWT_SECRET:
 Generate a strong random string (use online password generators or **openssl rand -base64 32**).
 
-#### SENDGRID_API_KEY:
-Sign up at SendGrid, create an API key to send emails (used for password reset functionality).
-
 #### GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET:
 Create OAuth credentials via Google Cloud Console for Google sign-in.
 
