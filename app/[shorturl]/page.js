@@ -6,7 +6,7 @@ export default async function ShortUrlPage({ params }) {
   const { shorturl } = await params; // Await the params object before accessing shorturl
 
   const client = await clientPromise;
-  const db = client.db();
+  const db = client.db("bitlinks");
   const urls = db.collection("urls");
 
   const data = await urls.findOne({ shortUrl: shorturl });
