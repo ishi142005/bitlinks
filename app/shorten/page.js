@@ -11,20 +11,27 @@ export default function ShortenPage() {
     e.preventDefault();
     setError('');
     setShortUrl('');
-
+  
     const trimmedAlias = customAlias.trim();
     const requestBody = { originalUrl };
+  
+    const isValidAlias = /^[a-zA-Z0-9_-]*$/.test(trimmedAlias);
+    if (trimmedAlias && !isValidAlias) {
+      setError('Only letters, numbers, hyphens (-), and underscores (_) are allowed in custom URLs.');
+      return;
+    }
+  
     if (trimmedAlias.length > 0) {
       requestBody.shortUrl = trimmedAlias;
     }
-
+  
     try {
       const response = await fetch('/api/shorten', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       });
-
+  
       const data = await response.json();
       if (data.success) {
         setShortUrl(`${window.location.origin}/${encodeURIComponent(data.shortUrl)}`);
@@ -35,7 +42,7 @@ export default function ShortenPage() {
       setError('Something went wrong. Please try again.');
     }
   };
-
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-10 px-4 bg-gray-900">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-black">
