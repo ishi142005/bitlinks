@@ -27,7 +27,7 @@ export default function ShortenPage() {
 
       const data = await response.json();
       if (data.success) {
-        setShortUrl(`${window.location.origin}/${data.shortUrl}`);
+        setShortUrl(`${window.location.origin}/${encodeURIComponent(data.shortUrl)}`);
       } else {
         setError(data.error || 'Unknown error');
       }
