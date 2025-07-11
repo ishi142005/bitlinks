@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import clientPromise from '@/lib/mongodb';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
@@ -35,7 +34,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Reject purely numeric short URLs
+    // Reject purely numeric short URLs
     if (/^\d+$/.test(finalShortUrl)) {
       return Response.json(
         { success: false, error: 'Custom short URL cannot be purely numeric. Please include letters.' },
@@ -43,7 +42,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Reject invalid characters in alias
+    // Reject invalid characters in alias
     if (!/^[a-zA-Z0-9_-]+$/.test(finalShortUrl)) {
       return Response.json(
         {
@@ -54,7 +53,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Check global uniqueness
+    // Check global uniqueness
     const taken = await urls.findOne({ shortUrl: finalShortUrl });
     if (taken) {
       return Response.json(
@@ -63,7 +62,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Optional: Reuse if same user already shortened same URL
+    // Optional: Reuse if same user already shortened same URL
     const existingForUser = await urls.findOne({
       original: originalUrl,
       email: session.user.email,
@@ -75,7 +74,7 @@ export async function POST(req) {
       );
     }
 
-    // ✅ Save the new short URL
+    // Save the new short URL
     await urls.insertOne({
       original: originalUrl,
       shortUrl: finalShortUrl,

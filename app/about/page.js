@@ -26,7 +26,7 @@ const features = [
   {
     icon: <FaChartLine size={28} className="text-indigo-500" />,
     title: "Manage with Ease",
-    desc: "Edit, copy, or delete links from a beautiful dashboard.",
+    desc: "Copy, or delete links from a beautiful dashboard.",
   },
 ];
 
