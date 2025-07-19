@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { initIndexes } from '@/lib/initIndexes'; 
 
 export async function middleware(req) {
+  await initIndexes();
+
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const protectedRoutes = ['/shorten', '/profile'];
 
