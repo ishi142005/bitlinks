@@ -1,84 +1,68 @@
-# Bitlinks – Custom URL Shortener
+# Bitlinks — A Full-Stack URL Shortening Service
 
-Bitlinks is a modern URL shortener built with **Next.js**, **MongoDB**, and **Tailwind CSS**.  
-Users can sign up, create custom short URLs, and manage their links securely.
+Bitlinks is a modern, full-stack URL shortener built with Next.js, Node.js, and MongoDB. It provides a secure, user-centric platform for creating, managing, and tracking custom short links. This project demonstrates a comprehensive understanding of modern web development practices, including secure authentication, API design, and database management.
 
-
----
-
-## 🧠 Features
-
-- 🔐 User authentication (Login & Signup)
-- ✂️ Custom short URLs
-- 🧾 User-specific link history
-- ☁️ MongoDB for link storage
-- 🎨 Tailwind CSS for modern UI
-- 🌐 Ready for deployment (Vercel)
+**[[Link to Live Demo](https://bitlinks-bice.vercel.app/)]** - **[[Link to GitHub Repo](https://github.com/ishi142005/bitlinks)]**
 
 ---
 
-## 📦 Tech Stack
+## ✨ Key Features
 
-- **Frontend:** Next.js 14 (App Router)
-- **Database:** MongoDB Atlas
-- **Styling:** Tailwind CSS
-- **Auth & API:** JSON Web Tokens, SendGrid (optional)
-- **Deployment:** Vercel
+-   **Secure User Authentication:** Implements a robust JWT-based authentication system with salted password hashing (bcrypt) to ensure user data is protected.
+-   **Custom Short URL Creation:** Allows users to create personalized, human-readable short links instead of random strings.
+-   **User Dashboard:** Provides each user with a private dashboard to view, manage, and delete their own links.
+-   **High-Performance Redirection:** Utilizes Next.js server-side logic and MongoDB indexing for near-instantaneous redirection from short links to their original destination.
 
 ---
 
+## 🛠️ Tech Stack & Architecture
 
-## Getting Started
+-   **Frontend:** Next.js 14 (App Router), React, Tailwind CSS
+-   **Backend:** Node.js, Next.js API Routes
+-   **Database:** MongoDB for data modeling and validation.
+-   **Authentication:** JSON Web Tokens (JWT), bcrypt
+-   **Deployment:** Vercel (with automated CI/CD pipeline)
 
-Follow these instructions to get a copy of the project running on your local machine for development and testing.
+---
 
-### Step 1: Clone the Repository
+## 🚀 Getting Started
 
-Open your terminal and run:
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+-   Node.js (v18 or later)
+-   npm or yarn
+-   Git
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/ishi142005/bitlinks.git
 cd bitlinks
-```
 
-### Step 2:  Install Dependencies
+ ```
 
-Open your terminal and run:
-```
+## Install Dependencies
+```bash
 npm install
 ```
 
-### Step 3:  Set Up Environment Variables
-
+## Set Up Environment Variables
+Create a .env.local file in the root of your project directory. You can do this by copying the example file:
+```bash
+cp .env.example .env.local
 ```
-touch .env.local
-```
 
-### Step 4:  Get Your Credentials
+- **MONGODB_URI**: Your connection string from MongoDB Atlas.
+Now, open .env.local and add the following required credentials:
+- **JWT_SECRET**: A strong, secret key for signing tokens. You can generate one using openssl rand -base64 32 in your terminal.
+- **GOOGLE_CLIENT_ID**: Your Google OAuth Client ID from the Google Cloud Console.
+- **GOOGLE_CLIENT_SECRET**: Your Google OAuth Client Secret.
 
-Here’s how you can get each required credential:
-
-#### MONGODB_URI:
-Sign up on MongoDB Atlas, create a cluster, whitelist your IP address, and get your connection string.
-
-#### JWT_SECRET:
-Generate a strong random string (use online password generators or **openssl rand -base64 32**).
-
-#### GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET:
-Create OAuth credentials via Google Cloud Console for Google sign-in.
-
-
-
-### Step 5: Run the Development Server
-Start your app locally by running:
-```bash:
+## Run the Development Server
+```bash
 npm run dev
 ```
-Or if you use Yarn:
-```bash:
-yarn dev
-```
-Open your browser and visit:
-```
-http://localhost:3000
-```
+The application should now be running at http://localhost:3000.
+
