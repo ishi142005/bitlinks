@@ -88,7 +88,6 @@ export const authOptions = {
 
         const existingUser = await users.findOne({ email: user.email });
         if (!existingUser) {
-          // Automatically register new Google user
           await users.insertOne({
             email: user.email,
             name: user.name,

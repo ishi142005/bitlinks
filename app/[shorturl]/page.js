@@ -2,8 +2,7 @@ import clientPromise from "@/lib/mongodb";
 import { redirect } from "next/navigation";
 
 export default async function ShortUrlPage({ params }) {
-  // Use await to access the params before using it
-  const { shorturl } = await params; // Await the params object before accessing shorturl
+  const { shorturl } = await params; 
 
   const client = await clientPromise;
   const db = client.db("bitlinks");
@@ -15,5 +14,5 @@ export default async function ShortUrlPage({ params }) {
     redirect(data.original);  // Redirect to the original URL
   }
 
-  return <div>404 | This URL does not exist</div>;  // Fallback if short URL does not exist
+  return <div>404 | This URL does not exist</div>;  
 }

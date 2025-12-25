@@ -62,7 +62,7 @@ export async function POST(req) {
       );
     }
 
-    // Optional: Reuse if same user already shortened same URL
+    // Reuse if same user already shortened same URL
     const existingForUser = await urls.findOne({
       original: originalUrl,
       email: session.user.email,

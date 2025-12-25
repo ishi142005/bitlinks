@@ -4,7 +4,6 @@ import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
-// DELETE: delete a URL by ID
 export async function DELETE(request) {
   const session = await getServerSession(authOptions);
 
@@ -14,12 +13,11 @@ export async function DELETE(request) {
 
   try {
     const url = new URL(request.url);
-    const id = url.pathname.split("/").pop(); // get the last segment of the URL path
+    const id = url.pathname.split("/").pop(); 
 
     const client = await clientPromise;
     const db = client.db("bitlinks");
 
-    // Fetch the URL to be deleted (in case you want to return it)
     const urlToDelete = await db.collection("urls").findOne({ _id: new ObjectId(id), email: session.user.email });
 
     const result = await db.collection("urls").deleteOne({
@@ -27,7 +25,6 @@ export async function DELETE(request) {
       email: session.user.email,
     });
 
-    // If the deletion was successful, return the deleted URL
     if (result.deletedCount > 0) {
       return NextResponse.json({ success: true, deletedUrl: urlToDelete });
     } else {
@@ -39,7 +36,6 @@ export async function DELETE(request) {
   }
 }
 
-// GET: fetch a URL by ID
 export async function GET(request, { params }) {
   const session = await getServerSession(authOptions); // No { req }
 

@@ -20,7 +20,7 @@ export async function POST(request) {
     if (existing) {
       return Response.json(
         { success: false, message: "User already exists" },
-        { status: 409 } // Conflict status code
+        { status: 409 } 
       );
     }
 
@@ -33,13 +33,13 @@ export async function POST(request) {
 
     return Response.json(
       { success: true, message: "User created successfully" },
-      { status: 201 } // Created status code
+      { status: 201 } 
     );
   } catch (error) {
     console.error("Error in user signup:", error);
     return Response.json(
       { success: false, message: "An error occurred during signup" },
-      { status: 500 } // Internal Server Error status code
+      { status: 500 } 
     );
   }
 }
